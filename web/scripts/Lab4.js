@@ -17,7 +17,27 @@ var Lab4 = ( function() {
              */
 
             // INSERT YOUR CODE HERE
+            
+            var out = "<p>";
+            
+            var input = $("#input").val();
+            if (input.length > 0) {
+                
+                input = Number(input);
+                
+                var r = rates['rates'];
 
+                for (var key in r) {
+                    out += key + ": " + (input * r[key]) + "<br />";
+                }
+                
+                out += "</p>";
+                
+            }
+            
+            $("#output").html(out);
+            
+            
         },
         
         getConversion: function() {
@@ -45,6 +65,8 @@ var Lab4 = ( function() {
                 }
             });
             
+            //alert(JSON.stringify(response));
+            
         },
         
         init: function() {
@@ -52,6 +74,8 @@ var Lab4 = ( function() {
             /* Output the current version of jQuery (for diagnostic purposes) */
             
             $('#output').html( "jQuery Version: " + $().jquery );
+            
+                
  
         }
 
