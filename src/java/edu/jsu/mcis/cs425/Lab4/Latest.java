@@ -17,22 +17,15 @@ public class Latest extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        response.setContentType("text/json;charset=UTF-8");
+        //response.setContentType("text/json;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         
         String path = getServletContext().getRealPath(File.separator + Rates.RATE_FILENAME);
         
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            /*out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet latest</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet latest at " + request.getContextPath() + "</h1>");*/
-            out.println(Rates.getRatesAsJson(Rates.getRates(path)));
-            /*out.println("</body>");
-            out.println("</html>");*/
+            
+            out.println(Rates.getRatesAsJson(request.getParameter("code")));
+            
         }
     }
 

@@ -8,6 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import java.sql.*;
+import javax.sql.DataSource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 public class Rates {
     
@@ -147,6 +151,73 @@ public class Rates {
         
         return (results.trim());
         
+    }
+    
+    public static String getRatesAsJson(String code){
+        
+        String result = "";
+        PreparedStatement pstSelect = null;
+        ResultSet resultset = null;
+        
+        String query;
+        boolean hasresults;
+        
+        
+        try{
+            
+            JSONObject json = new JSONObject();
+            JSONObject rates = new JSONObject();
+            
+            Context envContext = new InitialContext();
+            Context initContext = (Context)envContext.lookup("java:/comp/env");
+            DataSource ds = (DataSource)initContext.lookup("jdbc/db_pool");
+            Connection conn = ds.getConnection();
+            
+            
+            if(conn.isValid(0)){
+                System.err.println("Connected Successfully!");
+            }
+            
+            if (code != null) {
+
+                query = "SELECT * FROM rates WHERE code=?";
+
+                pstSelect = conn.prepareStatement(query);
+                pstSelect.setString(1, code);
+                
+            }
+            
+            else {
+                query = "SELECT * FROM rates";
+
+                pstSelect = conn.prepareStatement(query);
+            }
+            
+            
+            hasresults = pstSelect.execute();
+            
+            if(hasresults){
+                resultset = pstSelect.getResultSet();
+                while (!resultset.isLast()) {
+                    resultset.next();
+                    code = resultset.getString("code");
+                    double rate = resultset.getDouble("rate");
+                    rates.put(code, rate);
+                }
+                
+
+            }
+            
+            json.put("date", "2019-09-30");
+            json.put("rates", rates);
+            json.put("base", "USD");
+            
+            
+            result = JSONValue.toJSONString(json);
+        
+        } catch (Exception e){System.err.println(e.toString());}
+        
+        return (result.trim());
     }
 
 }
